@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<context:annotation-config />
+
+	<context:property-placeholder location="classpath:app.properties"/>
+
+
+	<bean id="storage" class="com.mwo.spotify.utils.Storage" />
+
+	<bean id="spotifyServer" class="com.mwo.spotify.rest.SpotifyServer" />
+
+	<bean id="theCurrent" class="com.mwo.spotify.source.TheCurrent" />
+
+	<bean id="authService" class="com.mwo.spotify.api.service.AuthService" />
+
+	<bean id="playlistService" class="com.mwo.spotify.api.service.PlaylistService" />
+
+	<task:scheduled-tasks scheduler="authScheduler">
+		<task:scheduled ref="authService" method="getCode"
+			fixed-delay="5000" />
+		<task:scheduled ref="authService" method="getToken"
+			fixed-delay="10000" />
+		<task:scheduled ref="authService" method="refreshToken"
+			fixed-delay="360000" />
+	</task:scheduled-tasks>
+
+	<task:scheduler id="authScheduler" pool-size="1" />
+
+	<task:scheduled-tasks scheduler="myScheduler">
+		<task:scheduled ref="theCurrent" method="getSongs"
+			fixed-delay="360000" initial-delay="60000"/>
+	</task:scheduled-tasks>
+
+	<task:scheduler id="myScheduler" pool-size="1" />
+
+
+</beans>
