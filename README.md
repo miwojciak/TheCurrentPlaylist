@@ -1,5 +1,8 @@
 # TheCurrentPlaylist
 
+WARNING!!!
+The quality of code is terrible.
+
 Too complicated playlist fetcher. 
 
 1. Fetch playlist from http://thecurrent.org/
